@@ -1,0 +1,57 @@
+.flex-container {
+    width: 480px;
+    height: 480px;
+    display: flex;
+    margin: 0 auto;
+    background: silver;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  h2 {
+    text-align: right;
+  }
+  
+  .screen{
+      width: 400px;
+      height: 75px;
+      background: white;
+      margin: 20px auto;
+  }
+
+  .buttonArea {
+      width: 420px;
+      height: 320px;
+      background: white;
+      margin: 20px auto;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      
+      
+  }
+
+  
+
+  button {
+    width: 100px;
+    height: 60px;
+    border: 2px solid black;
+    margin: 2px;
+    justify-content: center;
+    
+  }
+
+  #equals{
+    flex-basis: 38.5%
+  }
+
+  #clear {
+    flex-basis: 38.5%;
+  }
+  
+ 
