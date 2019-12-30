@@ -32,11 +32,17 @@ window.onload = function(){
 }
 
 let displayValue;
+let tempValue;
 let operator;
 let a;
 let b;
-let input = [];
+
 let newFlag = false;
+let currentValue = "";
+
+
+let allCalculations = [];
+
 
 
 
@@ -49,19 +55,29 @@ function populateDisplay(){
             document.getElementById("value").innerHTML = "";
             newFlag = false;
         } 
+        
+        if (btn.id !== 'operator'){
+            currentValue += btn.innerHTML;
+            //console.log(currentValue);
+        }
+        
+        
         displayValue = document.getElementById("value").innerHTML += btn.innerHTML;
         })
     })
 }
+
+
 
 function storeInput() { // store operator and first number to global variables
     const operators = document.querySelectorAll('#operator');
     operators.forEach((op)=>{
         op.addEventListener('click', () => { 
         operator = op.innerHTML;
-        a = displayValue.slice(0,this.length-1);
+        a = currentValue;
             console.log(a);
-            console.log(operator);
+           console.log(operator);
+           currentValue = "";
         })
     })
 }
@@ -69,24 +85,28 @@ function storeInput() { // store operator and first number to global variables
 function getSolution() { // store second number to global var b
     const equals = document.querySelector('#equals');
     equals.addEventListener('click', () => { 
-        console.log(displayValue);
-        b = (displayValue.slice(a.length+1)); // a length + operator length(1)
         
-        
+        b = currentValue; // a length + operator length(1)
+        console.log(a,operator,b);
+        let calculation = new Array(a,operator,b);
+        allCalculations.push(calculation);
+        console.log(allCalculations);
         let solution = operate(operator,a,b);
         document.getElementById("value").innerHTML = solution;
         console.log(solution);
         newFlag = true;
+        
     })
     
 }
 
 function clearData(){
-    displayValue = null;
+    displayValue = "";
     operator = null;
     a = null;
     b = null;
-    solution = null;
+    solution = "";
+    currentValue = "";
 }
     
 
