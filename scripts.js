@@ -11,10 +11,11 @@ multiply = (a,b) => {
 }
 
 divide = (a,b) => {
+    if (b === 0) return 'Can\'t divide by 0';
     return a/b;
 }
 
-operate = (operator,a,b) => {
+operate = (a,operator,b) => {
     a = parseFloat(a);
     b = parseFloat(b);
     if (operator === '+') return add(a,b); 
@@ -24,10 +25,14 @@ operate = (operator,a,b) => {
     else return 'error';
 }
 
+
+
+
+
 window.onload = function(){
 
     populateDisplay();
-    storeInput();
+   //storeInput();
     getSolution();
 }
 
@@ -67,7 +72,7 @@ function populateDisplay(){
     })
 }
 
-
+/*
 
 function storeInput() { // store operator and first number to global variables
     const operators = document.querySelectorAll('#operator');
@@ -82,23 +87,71 @@ function storeInput() { // store operator and first number to global variables
     })
 }
 
+class Calculation {
+    a;
+    op;
+    b;
+}
+*/
+
+let operatorArray = [];
+let calcArr = [];
+
 function getSolution() { // store second number to global var b
     const equals = document.querySelector('#equals');
     equals.addEventListener('click', () => { 
+
+        console.log(displayValue);
+        operatorArray = displayValue.split(/[0-9]+/);
+        operatorArray.shift();
+        operatorArray.pop();
+
+
+        calcArr = displayValue.split(/([*/+-])+/);
         
-        b = currentValue; // a length + operator length(1)
-        console.log(a,operator,b);
-        let calculation = new Array(a,operator,b);
-        allCalculations.push(calculation);
-        console.log(allCalculations);
-        let solution = operate(operator,a,b);
+        console.log(calcArr);
+        console.log(operatorArray);
+        console.log(displayValue);
+        let solution = calculate(calcArr, operatorArray);
         document.getElementById("value").innerHTML = solution;
-        console.log(solution);
+        
+
         newFlag = true;
         
     })
     
 }
+
+function calculate(calcArr, opArr) {
+    let subSolution = 0;
+    let solution = 0;
+    let tempArr = calcArr;
+
+    
+
+    for (let i=0; i<opArr.length; i++){
+        let a = tempArr[0];
+        let op = tempArr[1];
+        let b = tempArr[2];
+
+        subSolution = operate(a,op,b);
+        tempArr = tempArr.slice(3);
+        
+        if(tempArr.length !== 0){
+            tempArr.unshift(subSolution);
+        }
+
+        else return subSolution;
+    }
+}
+
+function checkPresedence(calcArr) {
+
+}
+
+
+
+
 
 function clearData(){
     displayValue = "";
