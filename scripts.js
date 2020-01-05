@@ -90,7 +90,7 @@ function getSolution() {
 function operatorsInArray(arr) {
     let count = 0;
     for (let i=0; i<arr.length; i++){
-        if (arr[i] === '*' | arr[i] === '/' | arr[i] === '+' | arr[i] === '-') {
+        if (arr[i] === '*' || arr[i] === '/' || arr[i] === '+' || arr[i] === '-') {
             count++;
         }
     }
@@ -100,26 +100,25 @@ function operatorsInArray(arr) {
 function calculate(calcArr) {
     let subSolution = 0;
     let tempArr = calcArr;
-    let a;
-    let op;
-    let b;
-    let idx;
+    let a, b, op;
+    let idx, tempIdx1, tempIdx2;
     let operations = operatorsInArray(calcArr);
 
     for (let i=0; i<operations; i++){
-        if (tempArr.includes('*')){
-            idx = tempArr.indexOf('*');
-        }
-        else if (tempArr.includes('/')){
+        if (tempArr.includes('/')){
             idx = tempArr.indexOf('/');
         }
-        else if (tempArr.includes('+')){
-            idx = tempArr.indexOf('+');
+        else if (tempArr.includes('*')) {
+            idx = tempArr.indexOf('*');
         }
-        else if (tempArr.includes('-')){
-            idx = tempArr.indexOf('-');
+        else if (tempArr.includes('+') || (tempArr.includes('-'))){
+            tempIdx1 = tempArr.indexOf('+');
+            tempIdx2 = tempArr.indexOf('-');
+            if (tempIdx1 === -1) idx = tempIdx2;
+            else if (tempIdx2 === -1) idx = tempIdx1;
+            else idx = Math.min(tempIdx1, tempIdx2);
         }
-
+    
             a = tempArr[idx-1];
             op = tempArr[idx];
             b = tempArr[idx+1];
@@ -127,9 +126,10 @@ function calculate(calcArr) {
             subSolution = operate(a,op,b);
             
             tempArr.splice(idx-1, 3);
-            console.log(tempArr);
+            
             if(tempArr.length !== 0){
                 tempArr.splice(idx-1, 0, subSolution);
+                console.log(tempArr);
                 
             }
             else return subSolution;
