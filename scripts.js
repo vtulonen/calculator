@@ -32,23 +32,12 @@ operate = (a,operator,b) => {
 window.onload = function(){
 
     populateDisplay();
-   //storeInput();
     getSolution();
 }
 
 let displayValue;
-let tempValue;
-let operator;
-let a;
-let b;
-
 let newFlag = false;
 let currentValue = "";
-
-
-let allCalculations = [];
-
-
 
 
 function populateDisplay(){
@@ -63,7 +52,7 @@ function populateDisplay(){
         
         if (btn.id !== 'operator'){
             currentValue += btn.innerHTML;
-            //console.log(currentValue);
+            
         }
         
         
@@ -72,47 +61,23 @@ function populateDisplay(){
     })
 }
 
-/*
 
-function storeInput() { // store operator and first number to global variables
-    const operators = document.querySelectorAll('#operator');
-    operators.forEach((op)=>{
-        op.addEventListener('click', () => { 
-        operator = op.innerHTML;
-        a = currentValue;
-            console.log(a);
-           console.log(operator);
-           currentValue = "";
-        })
-    })
-}
-
-class Calculation {
-    a;
-    op;
-    b;
-}
-*/
 
 let operatorArray = [];
 let calcArr = [];
 
-function getSolution() { // store second number to global var b
+function getSolution() { 
     const equals = document.querySelector('#equals');
     equals.addEventListener('click', () => { 
 
         console.log(displayValue);
-        operatorArray = displayValue.split(/[0-9]+/);
-        operatorArray.shift();
-        operatorArray.pop();
-
-
+        
         calcArr = displayValue.split(/([*/+-])+/);
         
         console.log(calcArr);
         console.log(operatorArray);
         console.log(displayValue);
-        let solution = calculate(calcArr, operatorArray);
+        let solution = calculate(calcArr);
         document.getElementById("value").innerHTML = solution;
         
 
@@ -122,43 +87,68 @@ function getSolution() { // store second number to global var b
     
 }
 
-function calculate(calcArr, opArr) {
+function operatorsInArray(arr) {
+    let count = 0;
+    for (let i=0; i<arr.length; i++){
+        if (arr[i] === '*' | arr[i] === '/' | arr[i] === '+' | arr[i] === '-') {
+            count++;
+        }
+    }
+    return count;
+}
+
+function calculate(calcArr) {
     let subSolution = 0;
-    let solution = 0;
     let tempArr = calcArr;
+    let a;
+    let op;
+    let b;
+    let idx;
+    let operations = operatorsInArray(calcArr);
 
-    
-
-    for (let i=0; i<opArr.length; i++){
-        let a = tempArr[0];
-        let op = tempArr[1];
-        let b = tempArr[2];
-
-        subSolution = operate(a,op,b);
-        tempArr = tempArr.slice(3);
-        
-        if(tempArr.length !== 0){
-            tempArr.unshift(subSolution);
+    for (let i=0; i<operations; i++){
+        if (tempArr.includes('*')){
+            idx = tempArr.indexOf('*');
+        }
+        else if (tempArr.includes('/')){
+            idx = tempArr.indexOf('/');
+        }
+        else if (tempArr.includes('+')){
+            idx = tempArr.indexOf('+');
+        }
+        else if (tempArr.includes('-')){
+            idx = tempArr.indexOf('-');
         }
 
-        else return subSolution;
-    }
+            a = tempArr[idx-1];
+            op = tempArr[idx];
+            b = tempArr[idx+1];
+
+            subSolution = operate(a,op,b);
+            
+            tempArr.splice(idx-1, 3);
+            console.log(tempArr);
+            if(tempArr.length !== 0){
+                tempArr.splice(idx-1, 0, subSolution);
+                
+            }
+            else return subSolution;
+        
+        }
+    
+       
 }
 
-function checkPresedence(calcArr) {
 
+function test(numArr){
+    
+    let solution = calculate(numArr);
+    console.log(solution);
 }
-
-
-
 
 
 function clearData(){
     displayValue = "";
-    operator = null;
-    a = null;
-    b = null;
-    solution = "";
     currentValue = "";
 }
     
