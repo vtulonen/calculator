@@ -25,37 +25,27 @@ operate = (a,operator,b) => {
     else return 'error';
 }
 
-
-
-
-
 window.onload = function(){
 
     populateDisplay();
     getSolution();
 }
 
-let displayValue;
-let newFlag = false;
-let currentValue = "";
+// GLOBAL VARIABLES
+
+let displayValue;     // Value displayed on screen
+let newFlag = false;  // To check if new calculation is started
 
 
+// Whenever a key is pressed, display its value on screen
 function populateDisplay(){
     const buttons = document.querySelectorAll('.key');
     buttons.forEach((btn) => {
         btn.addEventListener('click', () => {
-        if (newFlag === true) {
+        if (newFlag === true) { // check flag status to clear existing data if needed
             clearData(); 
-            document.getElementById("value").innerHTML = "";
-            newFlag = false;
         } 
-        
-        if (btn.id !== 'operator'){
-            currentValue += btn.innerHTML;
-            
-        }
-        
-        
+        // Save to variable to use in calculation
         displayValue = document.getElementById("value").innerHTML += btn.innerHTML;
         })
     })
@@ -63,30 +53,28 @@ function populateDisplay(){
 
 
 
-let operatorArray = [];
-let calcArr = [];
-
+// Create a an arrray from displayValue -> calculate -> display solution
 function getSolution() { 
+    let calcArr = [];
+
     const equals = document.querySelector('#equals');
     equals.addEventListener('click', () => { 
 
         console.log(displayValue);
         
-        calcArr = displayValue.split(/([*/+-])+/);
+        calcArr = displayValue.split(/([*/+-])+/); // Split operands with operators into an array
         
         console.log(calcArr);
-        console.log(operatorArray);
+        
         console.log(displayValue);
-        let solution = calculate(calcArr);
+        let solution = calculate(calcArr); // Calculate with array elements
         document.getElementById("value").innerHTML = solution;
-        
-
-        newFlag = true;
-        
+        newFlag = true; // set flag after showing solution
     })
     
 }
 
+// Count & return amount of operators in an array
 function operatorsInArray(arr) {
     let count = 0;
     for (let i=0; i<arr.length; i++){
@@ -97,6 +85,13 @@ function operatorsInArray(arr) {
     return count;
 }
 
+
+/***************************************************************************************************
+*   Function:   Calculate using formula DMAS - Division Multiplication Addition Substraction                                                  
+*   Parameter:  An array containing the calculation, each operand and operator on their own index
+*               example : calcArr = ['75', '+', '25']
+*   Returns:    final solution
+****************************************************************************************************/
 function calculate(calcArr) {
     let subSolution = 0;
     let tempArr = calcArr;
@@ -104,35 +99,35 @@ function calculate(calcArr) {
     let idx, tempIdx1, tempIdx2;
     let operations = operatorsInArray(calcArr);
 
-    for (let i=0; i<operations; i++){
-        if (tempArr.includes('/')){
-            idx = tempArr.indexOf('/');
+    for (let i=0; i<operations; i++){   //Loop as many times as there are operators
+        if (tempArr.includes('/')){     //Check if calculation contains divison
+            idx = tempArr.indexOf('/'); //Set idx as the index of first '/'
         }
-        else if (tempArr.includes('*')) {
+        else if (tempArr.includes('*')) { // Multiplication next
             idx = tempArr.indexOf('*');
         }
-        else if (tempArr.includes('+') || (tempArr.includes('-'))){
-            tempIdx1 = tempArr.indexOf('+');
+        else if (tempArr.includes('+') || (tempArr.includes('-'))){ // Check + & -
+            tempIdx1 = tempArr.indexOf('+'); // Returns -1 if not found
             tempIdx2 = tempArr.indexOf('-');
-            if (tempIdx1 === -1) idx = tempIdx2;
+            if (tempIdx1 === -1) idx = tempIdx2; // If not found -> set  the other one as idx
             else if (tempIdx2 === -1) idx = tempIdx1;
-            else idx = Math.min(tempIdx1, tempIdx2);
-        }
+            else idx = Math.min(tempIdx1, tempIdx2); // if both found -> set lowest index as idx
+        }                                            // to calculate from left to right
     
-            a = tempArr[idx-1];
-            op = tempArr[idx];
-            b = tempArr[idx+1];
+            a = tempArr[idx-1];     //oprand before operator
+            op = tempArr[idx];      //operator idx that will be calculated now
+            b = tempArr[idx+1];     //operand after operator
 
-            subSolution = operate(a,op,b);
+            subSolution = operate(a,op,b); // operate
             
-            tempArr.splice(idx-1, 3);
+            tempArr.splice(idx-1, 3); // remove the operands/operator just used form the array
             
-            if(tempArr.length !== 0){
-                tempArr.splice(idx-1, 0, subSolution);
+            if(tempArr.length !== 0){ // if there are still operations to be done in an array
+                tempArr.splice(idx-1, 0, subSolution); // add subSolution where it was located before operating
                 console.log(tempArr);
                 
             }
-            else return subSolution;
+            else return subSolution; // if the array is empty, return (final) solution
         
         }
     
@@ -149,7 +144,8 @@ function test(numArr){
 
 function clearData(){
     displayValue = "";
-    currentValue = "";
+    document.getElementById("value").innerHTML = "";
+    newFlag = false; // reset flag status
 }
     
 
