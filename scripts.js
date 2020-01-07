@@ -35,7 +35,8 @@ window.onload = function(){
 
 let displayValue;     // Value displayed on screen
 let newFlag = false;  // To check if new calculation is started
-
+let ops = ['+','-','/','*'];
+let operatorRegex = new RegExp('^(' + ops.map(function(op) { return '\\' + op;}).join('|') + ')$');
 
 // Whenever a key is pressed, display its value on screen
 function populateDisplay(){
@@ -56,23 +57,36 @@ function populateDisplay(){
 // Create a an arrray from displayValue -> calculate -> display solution
 function getSolution() { 
     let calcArr = [];
-
+    let solution;
     const equals = document.querySelector('#equals');
     equals.addEventListener('click', () => { 
-
-        console.log(displayValue);
         
-        calcArr = displayValue.split(/([*/+-])+/); // Split operands with operators into an array
+        calcArr = displayValue.split(/([*/+-])/); // Split operands with operators into an array
         
         console.log(calcArr);
         
         console.log(displayValue);
-        let solution = calculate(calcArr); // Calculate with array elements
-        document.getElementById("value").innerHTML = solution;
-        newFlag = true; // set flag after showing solution
-    })
-    
+        
+        // Regex leaves leaves an empty string if first element is operator
+        // in that case we turn it into 0 so we can start with negative numbers
+        if ( calcArr[0] === '') { 
+            calcArr[0] === '0';
+            console.log(calcArr);
+        }
+        else {
+            solution = calculate(calcArr); // Calculate with array elements
+            if (isNaN(solution)) { // if solution is NaN, user must've entered malformed expression
+                newFlag = true;
+                return document.getElementById("value").innerHTML = 'Malformed expression';
+            }
+            document.getElementById("value").innerHTML = solution;
+            newFlag = true; // set flag after showing solution
+        }
+    })  
 }
+
+
+
 
 // Count & return amount of operators in an array
 function operatorsInArray(arr) {
