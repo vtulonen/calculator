@@ -29,6 +29,7 @@ window.onload = function(){
 
     populateDisplay();
     getSolution();
+    clearBtn();
 }
 
 // GLOBAL VARIABLES
@@ -54,7 +55,8 @@ function populateDisplay(){
 
 
 
-// Create a an arrray from displayValue -> calculate -> display solution
+
+// Create a an arrray of operators and operands from displayValue -> calculate -> display solution
 function getSolution() { 
     let calcArr = [];
     let solution;
@@ -70,18 +72,18 @@ function getSolution() {
         // Regex leaves leaves an empty string if first element is operator
         // in that case we turn it into 0 so we can start with negative numbers
         if ( calcArr[0] === '') { 
-            calcArr[0] === '0';
+            calcArr[0] = '0';
             console.log(calcArr);
         }
-        else {
-            solution = calculate(calcArr); // Calculate with array elements
-            if (isNaN(solution)) { // if solution is NaN, user must've entered malformed expression
-                newFlag = true;
-                return document.getElementById("value").innerHTML = 'Malformed expression';
-            }
-            document.getElementById("value").innerHTML = solution;
-            newFlag = true; // set flag after showing solution
+        
+        solution = calculate(calcArr); // Calculate with array elements
+        if (isNaN(solution)) { // if solution is NaN, user must've entered malformed expression
+            newFlag = true;
+            return document.getElementById("value").innerHTML = 'Malformed expression';
         }
+        document.getElementById("value").innerHTML = solution;
+        newFlag = true; // set flag after showing solution
+        
     })  
 }
 
@@ -141,8 +143,10 @@ function calculate(calcArr) {
                 console.log(tempArr);
                 
             }
-            else return subSolution; // if the array is empty, return (final) solution
-        
+            else {
+                console.log(subSolution); 
+                return round(subSolution); // if the array is empty, return (rounded if needed) solution
+            }
         }
     
        
@@ -161,8 +165,29 @@ function clearData(){
     document.getElementById("value").innerHTML = "";
     newFlag = false; // reset flag status
 }
-    
 
+
+function clearBtn() {
+    const cls = document.querySelector('#clear');
+    cls.addEventListener('click', () => {
+        clearData();
+    })
+}
+
+function round(solution) {
+    sSolution = solution.toString();
+
+    if (sSolution.includes('.')){
+        let idx = sSolution.indexOf('.');
+        let decimals = sSolution.length - (idx+1); 
+        
+        if (decimals > 4) { // if - return shorter solution
+            return parseFloat(solution).toFixed(3).replace(/0+$/, ""); // replace trailing zeros
+            
+        }
+    }
+    return solution;
+}
 
 
 
