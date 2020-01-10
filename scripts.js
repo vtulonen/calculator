@@ -1,27 +1,27 @@
-add = (a,b) => {
-    return a+b;
+add = (a, b) => {
+    return a + b;
 }
 
-substract = (a,b) => {
-    return a-b;
+substract = (a, b) => {
+    return a - b;
 }
 
-multiply = (a,b) => {
-    return a*b;
+multiply = (a, b) => {
+    return a * b;
 }
 
-divide = (a,b) => {
+divide = (a, b) => {
     if (b === 0) return 'Can\'t divide by 0';
-    return a/b;
+    return a / b;
 }
 
-operate = (a,operator,b) => {
+operate = (a, operator, b) => {
     a = parseFloat(a);
     b = parseFloat(b);
-    if (operator === '+') return add(a,b); 
-    if (operator === '-') return substract(a,b);  
-    if (operator === '*') return multiply(a,b);
-    if (operator === '/') return divide(a,b);
+    if (operator === '+') return add(a, b);
+    if (operator === '-') return substract(a, b);
+    if (operator === '*') return multiply(a, b);
+    if (operator === '/') return divide(a, b);
     else return 'error';
 }
 
@@ -30,7 +30,7 @@ addToDisplay = (key) => {
 }
 
 
-window.onload = function(){
+window.onload = function () {
 
     const buttons = document.querySelectorAll('.key');
     buttons.forEach((btn) => {
@@ -41,13 +41,13 @@ window.onload = function(){
     document.querySelector('#equals').addEventListener('click', (getSolution));
 
     document.querySelector('#clear').addEventListener('click', (clearData));
-    
+
 }
 
 // GLOBAL VARIABLES
 
 let displayValue = document.getElementById("value");     // Value displayed on screen
-
+let MAX_LENGTH = 19;
 let newFlag = false;  // To check if new calculation is started
 let ops = ['+','-','/','*'];
 let operatorRegex = new RegExp('^(' + ops.map(function(op) { return '\\' + op;}).join('|') + ')$');
@@ -55,6 +55,11 @@ let operatorRegex = new RegExp('^(' + ops.map(function(op) { return '\\' + op;})
 // Whenever a key is pressed, display its value on screen
 
 function storeInput(e) {
+    if (isFull(displayValue.innerHTML)){
+        displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length-1);
+        alert('dpfull');
+        return 0;
+    }
     const key = e.key;
 	if (e.type == 'click') {
         if (newFlag === true) { // check flag status to clear existing data if needed
@@ -104,20 +109,20 @@ function getSolution() {
 
     calcArr = displayValue.innerHTML.split(/([*/+-])/); // Split operands with operators into an array
         
-        // Regex leaves leaves an empty string if first element is operator
-        // in that case we turn it into 0 so we can start with negative numbers
-        if ( calcArr[0] === '') { 
-            calcArr[0] = '0';
-            console.log(calcArr);
-        }
+    // Regex leaves leaves an empty string if first element is operator
+    // in that case we turn it into 0 so we can start with negative numbers
+    if ( calcArr[0] === '') { 
+         calcArr[0] = '0';
+        console.log(calcArr);
+    }
         
-        solution = calculate(calcArr); // Calculate with array elements
-        if (isNaN(solution)) { // if solution is NaN, user must've entered malformed expression
-            newFlag = true;
-            return displayValue.innerHTML = 'Malformed expression';
-        }
-        displayValue.innerHTML = solution;
-        newFlag = true; // set flag after showing solution
+    solution = calculate(calcArr); // Calculate with array elements
+    if (isNaN(solution)) { // if solution is NaN, user must've entered malformed expression
+        newFlag = true;
+        return displayValue.innerHTML = 'Malformed expression';
+    }
+    displayValue.innerHTML = solution;
+    newFlag = true; // set flag after showing solution
 }
 
 
@@ -162,26 +167,24 @@ function calculate(calcArr) {
             else idx = Math.min(tempIdx1, tempIdx2); // if both found -> set lowest index as idx
         }                                            // to calculate from left to right
     
-            a = tempArr[idx-1];     //oprand before operator
-            op = tempArr[idx];      //operator idx that will be calculated now
-            b = tempArr[idx+1];     //operand after operator
+        a = tempArr[idx - 1];     //oprand before operator
+        op = tempArr[idx];      //operator idx that will be calculated now
+        b = tempArr[idx + 1];     //operand after operator
 
-            subSolution = operate(a,op,b); // operate
-            
-            tempArr.splice(idx-1, 3); // remove the operands/operator just used form the array
-            
-            if(tempArr.length !== 0){ // if there are still operations to be done in an array
-                tempArr.splice(idx-1, 0, subSolution); // add subSolution where it was located before operating
-                console.log(tempArr);
-                
-            }
-            else {
-                console.log(subSolution); 
-                return round(subSolution); // if the array is empty, return (rounded if needed) solution
-            }
+        subSolution = operate(a, op, b); // operate
+
+        tempArr.splice(idx - 1, 3); // remove the operands/operator just used form the array
+
+        if (tempArr.length !== 0) { // if there are still operations to be done in an array
+            tempArr.splice(idx - 1, 0, subSolution); // add subSolution where it was located before operating
+            console.log(tempArr);
+
         }
-    
-       
+        else {
+            console.log(subSolution);
+            return round(subSolution); // if the array is empty, return (rounded if needed) solution
+        }    
+    }
 }
 
 
@@ -194,14 +197,25 @@ function clearData(){
 function round(solution) {
     sSolution = solution.toString();
 
-    if (sSolution.includes('.')){
+    if (sSolution.includes('.')) {
         let idx = sSolution.indexOf('.');
-        let decimals = sSolution.length - (idx+1); 
-        
+        let decimals = sSolution.length - (idx + 1);
+
         if (decimals > 4) { // if - return shorter solution
             return parseFloat(solution).toFixed(3).replace(/0+$/, ""); // replace trailing zeros
-            
+
         }
     }
     return solution;
+}
+
+function isFull(display) {
+    if (display === 'Malformed expression') {
+        //clearData();
+        return false;
+    }
+    if (display.length > MAX_LENGTH){
+        return true;
+    }
+    else return false;
 }
