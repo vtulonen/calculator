@@ -25,15 +25,23 @@ operate = (a,operator,b) => {
     else return 'error';
 }
 
-addToScreen = (str) => {
-    document.getElementById("value").innerHTML = str;
+addToDisplay = (key) => {
+    displayValue.innerHTML += key;
 }
+
 
 window.onload = function(){
 
-    populateDisplay();
-    getSolution();
-    clearBtn();
+    const buttons = document.querySelectorAll('.key');
+    buttons.forEach((btn) => {
+        btn.addEventListener('click', storeInput);
+    })
+    document.addEventListener('keydown', storeInput);
+
+    document.querySelector('#equals').addEventListener('click', (getSolution));
+
+    document.querySelector('#clear').addEventListener('click', (clearData));
+    
 }
 
 // GLOBAL VARIABLES
@@ -45,38 +53,56 @@ let ops = ['+','-','/','*'];
 let operatorRegex = new RegExp('^(' + ops.map(function(op) { return '\\' + op;}).join('|') + ')$');
 
 // Whenever a key is pressed, display its value on screen
-function populateDisplay(){
-    const buttons = document.querySelectorAll('.key');
-    buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
+
+function storeInput(e) {
+    const key = e.key;
+	if (e.type == 'click') {
         if (newFlag === true) { // check flag status to clear existing data if needed
             clearData(); 
         }
-        if (btn.id === 'undo'){
+        if (this.id === 'undo'){
             displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length-1);
+
            return 0;
-        } 
+        }
         // Save to variable to use in calculation 
-        displayValue.innerHTML += btn.innerHTML;
-        })
-    })
+        addToDisplay(this.innerHTML);
+        
+    }
+    if (e.type === 'keydown' && e.key) {
+        console.log(key);
+        if (newFlag === true) { // check flag status to clear existing data if needed
+            clearData(); 
+        }
+        else if (operatorRegex.test(key) || /([0-9])/.test(key)){
+            if (key.length > 1) return 0;
+            displayValue.innerHTML += key;
+        }
+        else if (key === 'Backspace'){
+            displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length-1);
+            return 0;
+        }
+        else if (key === 'Enter'){
+            getSolution();
+        }
+        else if (key === 'Delete'){
+            clearData();
+        }
+        else if (key === '.' || ','){
+            displayValue.innerHTML += '.';
+        }
+        else return 0;
+    }
 }
 
 
 
-
 // Create a an arrray of operators and operands from displayValue -> calculate -> display solution
-function getSolution() { 
+function getSolution() {
     let calcArr = [];
     let solution;
-    const equals = document.querySelector('#equals');
-    equals.addEventListener('click', () => { 
-        
-        calcArr = displayValue.innerHTML.split(/([*/+-])/); // Split operands with operators into an array
-        
-        console.log(calcArr);
-        
-        console.log(displayValue.innerHTML);
+
+    calcArr = displayValue.innerHTML.split(/([*/+-])/); // Split operands with operators into an array
         
         // Regex leaves leaves an empty string if first element is operator
         // in that case we turn it into 0 so we can start with negative numbers
@@ -88,14 +114,11 @@ function getSolution() {
         solution = calculate(calcArr); // Calculate with array elements
         if (isNaN(solution)) { // if solution is NaN, user must've entered malformed expression
             newFlag = true;
-            return document.getElementById("value").innerHTML = 'Malformed expression';
+            return displayValue.innerHTML = 'Malformed expression';
         }
-        document.getElementById("value").innerHTML = solution;
+        displayValue.innerHTML = solution;
         newFlag = true; // set flag after showing solution
-        
-    })  
 }
-
 
 
 
@@ -115,7 +138,7 @@ function operatorsInArray(arr) {
 *   Function:   Calculate using formula DMAS - Division Multiplication Addition Substraction                                                  
 *   Parameter:  An array containing the calculation, each operand and operator on their own index
 *               example : calcArr = ['75', '+', '25']
-*   Returns:    final solution
+*   Returns:    rouded (if needed to fit the screen) final solution
 ****************************************************************************************************/
 function calculate(calcArr) {
     let subSolution = 0;
@@ -162,25 +185,10 @@ function calculate(calcArr) {
 }
 
 
-function test(numArr){
-    
-    let solution = calculate(numArr);
-    console.log(solution);
-}
-
-
 function clearData(){
     displayValue.innerHTML = "";
     document.getElementById("value").innerHTML = "";
     newFlag = false; // reset flag status
-}
-
-
-function clearBtn() {
-    const cls = document.querySelector('#clear');
-    cls.addEventListener('click', () => {
-        clearData();
-    })
 }
 
 function round(solution) {
@@ -197,8 +205,3 @@ function round(solution) {
     }
     return solution;
 }
-
-
-
-
-
