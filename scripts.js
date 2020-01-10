@@ -25,6 +25,10 @@ operate = (a,operator,b) => {
     else return 'error';
 }
 
+addToScreen = (str) => {
+    document.getElementById("value").innerHTML = str;
+}
+
 window.onload = function(){
 
     populateDisplay();
@@ -34,7 +38,8 @@ window.onload = function(){
 
 // GLOBAL VARIABLES
 
-let displayValue;     // Value displayed on screen
+let displayValue = document.getElementById("value");     // Value displayed on screen
+
 let newFlag = false;  // To check if new calculation is started
 let ops = ['+','-','/','*'];
 let operatorRegex = new RegExp('^(' + ops.map(function(op) { return '\\' + op;}).join('|') + ')$');
@@ -46,9 +51,13 @@ function populateDisplay(){
         btn.addEventListener('click', () => {
         if (newFlag === true) { // check flag status to clear existing data if needed
             clearData(); 
+        }
+        if (btn.id === 'undo'){
+            displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length-1);
+           return 0;
         } 
-        // Save to variable to use in calculation
-        displayValue = document.getElementById("value").innerHTML += btn.innerHTML;
+        // Save to variable to use in calculation 
+        displayValue.innerHTML += btn.innerHTML;
         })
     })
 }
@@ -63,11 +72,11 @@ function getSolution() {
     const equals = document.querySelector('#equals');
     equals.addEventListener('click', () => { 
         
-        calcArr = displayValue.split(/([*/+-])/); // Split operands with operators into an array
+        calcArr = displayValue.innerHTML.split(/([*/+-])/); // Split operands with operators into an array
         
         console.log(calcArr);
         
-        console.log(displayValue);
+        console.log(displayValue.innerHTML);
         
         // Regex leaves leaves an empty string if first element is operator
         // in that case we turn it into 0 so we can start with negative numbers
@@ -161,7 +170,7 @@ function test(numArr){
 
 
 function clearData(){
-    displayValue = "";
+    displayValue.innerHTML = "";
     document.getElementById("value").innerHTML = "";
     newFlag = false; // reset flag status
 }
