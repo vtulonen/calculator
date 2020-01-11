@@ -47,7 +47,7 @@ window.onload = function () {
 // GLOBAL VARIABLES
 
 let displayValue = document.getElementById("value");     // Value displayed on screen
-let MAX_LENGTH = 19;
+let MAX_LENGTH = 21;
 let newFlag = false;  // To check if new calculation is started
 let ops = ['+','-','/','*'];
 let operatorRegex = new RegExp('^(' + ops.map(function(op) { return '\\' + op;}).join('|') + ')$');
@@ -55,11 +55,7 @@ let operatorRegex = new RegExp('^(' + ops.map(function(op) { return '\\' + op;})
 // Whenever a key is pressed, display its value on screen
 
 function storeInput(e) {
-    if (isFull(displayValue.innerHTML)){
-        displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length-1);
-        alert('dpfull');
-        return 0;
-    }
+    
     const key = e.key;
 	if (e.type == 'click') {
         if (newFlag === true) { // check flag status to clear existing data if needed
@@ -97,6 +93,11 @@ function storeInput(e) {
             displayValue.innerHTML += '.';
         }
         else return 0;
+    }
+    if (isFull(displayValue.innerHTML)){
+        displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length-1);
+        alert('dpfull');
+        return 0;
     }
 }
 

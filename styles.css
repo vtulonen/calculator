@@ -1,48 +1,108 @@
 .flex-container {
     width: 480px;
-    height: 480px;
+    height: 460px;
     display: flex;
     margin: 0 auto;
     background: silver;
     flex-direction: column;
     justify-content: center;
+    align-content: center;
+    border-radius: 20px;
+    box-shadow: 10px 10px 5px grey;
+
+
+    
+    
   }
 
+  #gradientBG {
+    background: linear-gradient(-45deg, #17557e, #a4bdec);
+    background-size: 400% 400%;
+    animation: gradient 12s ease infinite;
+  }
+
+  .pagecontainer {
+    font-family: monospace; 
+    
+  }
+  body {
+    background-color: #a4bdec;
+    
+  }
+  
+  @keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+  #operator, #clear, #equals{
+    background-color: #ff00008e;
+    color: white
+  }
+  .key {
+    background-color: #a4bdec;
+    
+  }
   h1 {
     text-align: center;
   }
 
   h2 {
-    text-align: right;
+    font-size: 30px;
+    float: right;
+    margin: 0px;
+    padding-top: 20px;
+    padding-right: 20px;
+  }
+
+  p {
+    float: right;
+    clear: both;
+    margin: 0px;
+    padding-right: 22px;
   }
   
   .screen{
-      width: 400px;
-      height: 75px;
-      background: white;
-      margin: 20px auto;
+    width: 440px;
+    height: 75px;
+  
+    margin: 5px auto 5px;
+    overflow: hidden;   
+    border-radius: 20px;
+    border-style: dashed;
+    color:white;
   }
 
   .buttonArea {
-      width: 420px;
-      height: 320px;
-      background: white;
-      margin: 20px auto;
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      
-      
+    width: 420px;
+    height: 320px;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;     
+    flex-wrap: wrap;
+    border-radius: 5px;
   }
 
   
 
   button {
+    border-radius: 5px;
     width: 100px;
     height: 60px;
     border: 2px solid black;
     margin: 2px;
+    padding: 0px;
     justify-content: center;
+    font-size: 30px;
+    background-color: white;
+    
     
   }
 
