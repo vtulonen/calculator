@@ -36,67 +36,75 @@ window.onload = function () {
     buttons.forEach((btn) => {
         btn.addEventListener('click', storeInput);
     })
-    document.addEventListener('keydown', storeInput);
-
-    document.querySelector('#equals').addEventListener('click', (getSolution));
-
-    document.querySelector('#clear').addEventListener('click', (clearData));
-
+    document.addEventListener('keyup', storeInput);
 }
 
 // GLOBAL VARIABLES
 
 let displayValue = document.getElementById("value");     // Value displayed on screen
+let errorText = document.getElementById('errorText');
 let MAX_LENGTH = 21;
 let newFlag = false;  // To check if new calculation is started
-let ops = ['+','-','/','*'];
-let operatorRegex = new RegExp('^(' + ops.map(function(op) { return '\\' + op;}).join('|') + ')$');
+let ops = ['+', '-', '/', '*'];
+let operatorRegex = new RegExp('^(' + ops.map(function (op) { return '\\' + op; }).join('|') + ')$');
 
 // Whenever a key is pressed, display its value on screen
 
 function storeInput(e) {
-    
-    const key = e.key;
-	if (e.type == 'click') {
-        if (newFlag === true) { // check flag status to clear existing data if needed
-            clearData(); 
-        }
-        if (this.id === 'undo'){
-            displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length-1);
 
-           return 0;
+    const key = e.key;
+    if (e.type == 'click') {
+        console.log(this.innerHTML);
+        if (newFlag === true) { // check flag status to clear existing data if needed
+            clearData();
+
         }
-        // Save to variable to use in calculation 
-        addToDisplay(this.innerHTML);
-        
+        if (this.id === 'undo') {
+            displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length - 1);
+            return 0;
+        }
+        else if (this.id === 'equals') {
+            getSolution();
+        }
+        else if (this.id === 'clear') {
+            clearData();
+        }
+
+        else { // Save to variable to use in calculation 
+            addToDisplay(this.innerHTML);
+        }
+
+
     }
-    if (e.type === 'keydown' && e.key) {
+    if (e.type === 'keyup' && e.key) {
         console.log(key);
         if (newFlag === true) { // check flag status to clear existing data if needed
-            clearData(); 
+            clearData();
+
         }
-        else if (operatorRegex.test(key) || /([0-9])/.test(key)){
+        else if (operatorRegex.test(key) || /([0-9])/.test(key)) {
             if (key.length > 1) return 0;
             displayValue.innerHTML += key;
         }
-        else if (key === 'Backspace'){
-            displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length-1);
-            return 0;
+        else if (key === 'Backspace') {
+            displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length - 1);
+
         }
-        else if (key === 'Enter'){
+        else if (key === 'Enter') {
             getSolution();
+
         }
-        else if (key === 'Delete'){
+        else if (key === 'Delete') {
             clearData();
         }
-        else if (key === '.' || ','){
+        else if (key === '.' || key === ',') {
             displayValue.innerHTML += '.';
         }
         else return 0;
     }
-    if (isFull(displayValue.innerHTML)){
-        displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length-1);
-        alert('dpfull');
+    if (isFull(displayValue.innerHTML)) {
+        displayValue.innerHTML = displayValue.innerHTML.slice(0, displayValue.innerHTML.length - 1);
+        errorText.innerHTML = 'Display full';
         return 0;
     }
 }
@@ -109,18 +117,19 @@ function getSolution() {
     let solution;
 
     calcArr = displayValue.innerHTML.split(/([*/+-])/); // Split operands with operators into an array
-        
+
     // Regex leaves leaves an empty string if first element is operator
     // in that case we turn it into 0 so we can start with negative numbers
-    if ( calcArr[0] === '') { 
-         calcArr[0] = '0';
+    if (calcArr[0] === '') {
+        calcArr[0] = '0';
         console.log(calcArr);
     }
-        
+
     solution = calculate(calcArr); // Calculate with array elements
     if (isNaN(solution)) { // if solution is NaN, user must've entered malformed expression
         newFlag = true;
-        return displayValue.innerHTML = 'Malformed expression';
+        errorText.innerHTML = 'Malformed expression';
+        return 0;
     }
     displayValue.innerHTML = solution;
     newFlag = true; // set flag after showing solution
@@ -131,7 +140,7 @@ function getSolution() {
 // Count & return amount of operators in an array
 function operatorsInArray(arr) {
     let count = 0;
-    for (let i=0; i<arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
         if (arr[i] === '*' || arr[i] === '/' || arr[i] === '+' || arr[i] === '-') {
             count++;
         }
@@ -153,21 +162,21 @@ function calculate(calcArr) {
     let idx, tempIdx1, tempIdx2;
     let operations = operatorsInArray(calcArr);
 
-    for (let i=0; i<operations; i++){   //Loop as many times as there are operators
-        if (tempArr.includes('/')){     //Check if calculation contains divison
+    for (let i = 0; i < operations; i++) {   //Loop as many times as there are operators
+        if (tempArr.includes('/')) {     //Check if calculation contains divison
             idx = tempArr.indexOf('/'); //Set idx as the index of first '/'
         }
         else if (tempArr.includes('*')) { // Multiplication next
             idx = tempArr.indexOf('*');
         }
-        else if (tempArr.includes('+') || (tempArr.includes('-'))){ // Check + & -
+        else if (tempArr.includes('+') || (tempArr.includes('-'))) { // Check + & -
             tempIdx1 = tempArr.indexOf('+'); // Returns -1 if not found
             tempIdx2 = tempArr.indexOf('-');
             if (tempIdx1 === -1) idx = tempIdx2; // If not found -> set  the other one as idx
             else if (tempIdx2 === -1) idx = tempIdx1;
             else idx = Math.min(tempIdx1, tempIdx2); // if both found -> set lowest index as idx
         }                                            // to calculate from left to right
-    
+
         a = tempArr[idx - 1];     //oprand before operator
         op = tempArr[idx];      //operator idx that will be calculated now
         b = tempArr[idx + 1];     //operand after operator
@@ -184,14 +193,14 @@ function calculate(calcArr) {
         else {
             console.log(subSolution);
             return round(subSolution); // if the array is empty, return (rounded if needed) solution
-        }    
+        }
     }
 }
 
 
-function clearData(){
+function clearData() {
     displayValue.innerHTML = "";
-    document.getElementById("value").innerHTML = "";
+    errorText.innerHTML = "";
     newFlag = false; // reset flag status
 }
 
@@ -211,12 +220,19 @@ function round(solution) {
 }
 
 function isFull(display) {
-    if (display === 'Malformed expression') {
-        //clearData();
-        return false;
+
+    if (errorText.innerHTML === 'Malformed expression') {
+        // don't clear text
     }
-    if (display.length > MAX_LENGTH){
+    else errorText.innerHTML = ''; // clear errorText
+
+    if (display.length > MAX_LENGTH) {
         return true;
     }
     else return false;
 }
+
+// TODO 
+// 1. fix divide by 0 message
+// 2. tweak calculator to use latest solution as first operand
+// 3. ability to go back after malformed experssion 

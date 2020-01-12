@@ -3,22 +3,12 @@
     height: 460px;
     display: flex;
     margin: 0 auto;
-    background: silver;
+    background: #4982a8;
     flex-direction: column;
     justify-content: center;
     align-content: center;
     border-radius: 20px;
     box-shadow: 10px 10px 5px grey;
-
-
-    
-    
-  }
-
-  #gradientBG {
-    background: linear-gradient(-45deg, #17557e, #a4bdec);
-    background-size: 400% 400%;
-    animation: gradient 12s ease infinite;
   }
 
   .pagecontainer {
@@ -26,21 +16,9 @@
     
   }
   body {
-    background-color: #a4bdec;
+    background-color: whitesmoke;
     
   }
-  
-  @keyframes gradient {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
 
   #operator, #clear, #equals{
     background-color: #ff00008e;
@@ -67,6 +45,10 @@
     clear: both;
     margin: 0px;
     padding-right: 22px;
+    font-size: 15px;
+    font-weight: bold;
+    color: black;
+
   }
   
   .screen{
