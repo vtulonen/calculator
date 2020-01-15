@@ -204,9 +204,8 @@ function calculate(calcArr) {
     }
 }
 
-displayValue.innerHTML = "";
+
 function clearError() {
-    
     errorText.innerHTML = "";
     newFlag = false; // reset flag status
 }
@@ -238,8 +237,3 @@ function isFull(display) {
     }
     else return false;
 }
-
-// TODO 
-
-
-// 3. ability to go back after malformed experssion 
