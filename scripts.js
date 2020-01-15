@@ -56,7 +56,7 @@ function storeInput(e) {
     if (e.type == 'click') {
         console.log(this.innerHTML);
         if (newFlag === true) { // check flag status to clear existing data if needed
-            clearData();
+            clearError();
 
         }
         if (this.id === 'undo') {
@@ -67,7 +67,7 @@ function storeInput(e) {
             getSolution();
         }
         else if (this.id === 'clear') {
-            clearData();
+            displayValue.innerHTML = "";
         }
 
         else { // Save to variable to use in calculation 
@@ -79,7 +79,7 @@ function storeInput(e) {
     if (e.type === 'keyup' && e.key) {
         console.log(key);
         if (newFlag === true) { // check flag status to clear existing data if needed
-            clearData();
+            clearError();
 
         }
         else if (operatorRegex.test(key) || /([0-9])/.test(key)) {
@@ -95,7 +95,7 @@ function storeInput(e) {
 
         }
         else if (key === 'Delete') {
-            clearData();
+            displayValue.innerHTML = "";
         }
         else if (key === '.' || key === ',') {
             displayValue.innerHTML += '.';
@@ -122,10 +122,16 @@ function getSolution() {
     // in that case we turn it into 0 so we can start with negative numbers
     if (calcArr[0] === '') {
         calcArr[0] = '0';
-        console.log(calcArr);
     }
+    if (calcArr.length === 1) return 0;
 
     solution = calculate(calcArr); // Calculate with array elements
+
+    if (solution === 'Can\'t divide by 0'){
+        newFlag = true;
+        errorText.innerHTML = 'Can\'t divide by 0';
+        return 0;
+    }
     if (isNaN(solution)) { // if solution is NaN, user must've entered malformed expression
         newFlag = true;
         errorText.innerHTML = 'Malformed expression';
@@ -192,14 +198,15 @@ function calculate(calcArr) {
         }
         else {
             console.log(subSolution);
-            return round(subSolution); // if the array is empty, return (rounded if needed) solution
+            tempArr[0] = subSolution;
+            return round(subSolution); // if the array is empty, return (rounded solution if too long) solution
         }
     }
 }
 
-
-function clearData() {
-    displayValue.innerHTML = "";
+displayValue.innerHTML = "";
+function clearError() {
+    
     errorText.innerHTML = "";
     newFlag = false; // reset flag status
 }
@@ -221,7 +228,7 @@ function round(solution) {
 
 function isFull(display) {
 
-    if (errorText.innerHTML === 'Malformed expression') {
+    if (errorText.innerHTML === 'Malformed expression' || 'Can\'t divide by 0') {
         // don't clear text
     }
     else errorText.innerHTML = ''; // clear errorText
@@ -233,6 +240,6 @@ function isFull(display) {
 }
 
 // TODO 
-// 1. fix divide by 0 message
-// 2. tweak calculator to use latest solution as first operand
+
+
 // 3. ability to go back after malformed experssion 
